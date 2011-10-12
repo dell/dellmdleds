@@ -1,0 +1,77 @@
+#!/bin/sh
+#
+# Dell Inc. PROPRIETARY INFORMATION
+#
+# This software is supplied under the terms of a license agreement or
+# nondisclosure agreement with Dell Inc. and may not
+# be copied or disclosed except in accordance with the terms of that
+# agreement.
+#
+# Copyright (c) 2010-2011 Dell Inc. All Rights Reserved.
+#
+# Version: 1.0
+# The following is for Redhat
+#
+#chkconfig: 2345 00 20
+#description: Starts/Stops the mdadm monitoring script to set drive LEDs
+#processname:
+
+### BEGIN INIT INFO
+# Provides: dellmdmon
+# Required-Start: ipmi
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Start Dell LED mdadm monitoring daemon at boot time
+# Description: This script starts mdadm monitoring service and calls \
+#   external script to set drive LEDs when an event occurs.
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.status
+
+prog=dell_mdleds
+exec=/usr/bin/dell_mdleds
+pidfile=/var/run/$prog.pid
+lockfile=/var/lock/subsys/$prog
+
+case "$1" in
+    start)
+	service ipmi start
+        echo -n "Starting $prog"
+	start_daemon -p $pidfile /sbin/mdadm --monitor --scan --daemonize --pid-file $pidfile --program $exec
+	rc_status -v
+        ;;
+    stop)
+	echo -n "Stopping $prog"
+	killproc -TERM -p $pidfile /sbin/mdadm
+	rc_status -v
+	rm -f $lockfile
+        ;;
+    restart)
+        $0 stop
+	$0 start
+	rc_status
+        ;;
+    reload)
+        $0 try-restart
+	rc_status
+        ;;
+    force-reload)
+        $0 try-restart
+	rc_status
+        ;;
+    status)
+	echo -n "Checking status"
+	checkproc -p $pidfile /sbin/mdadm
+        rc_status -v
+        ;;
+    try-restart)
+	$0 status >/dev/null && $0 restart
+	rc_status
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload}"
+        exit 2
+esac
+exit $?
