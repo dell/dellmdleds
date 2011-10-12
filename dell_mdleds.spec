@@ -38,8 +38,6 @@ install -D -m755 %{wwix}/%{initscript} $RPM_BUILD_ROOT/etc/init.d/dell_mdmon
 
 %files
 %defattr(-,root,root)
-%dir /usr/bin
-%dir /etc/init.d
 /usr/bin/dell_mdleds
 /etc/init.d/dell_mdmon
 
