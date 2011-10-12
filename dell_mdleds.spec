@@ -1,4 +1,4 @@
-%define wwix /root/source/dellmdleds
+#%define wwix /root/source/dellmdleds/
 
 %define is_suse %(test -e /etc/SuSE-release && echo 1 || echo 0)
 %define is_fedora %(test -e /etc/fedora-release && echo 1 || echo 0)
@@ -21,18 +21,20 @@ URL: http://linux.dell.com
 Group: Utilities/System
 License: GPL
 BuildArch: i686 x86_64
+Source0: dell_mdmon.rhel
+Source1: dell_mdmon.suse
+Source2: dell_mdleds
 
 %description
 This RPM provides the necessary scripts so that mdadm can set 
 backplane LEDs (failure, identify) on Dell servers.
 
 %prep
-
 %build
 
 %install
-install -D -m755 %{wwix}/dell_mdleds $RPM_BUILD_ROOT/usr/bin/dell_mdleds
-install -D -m755 %{wwix}/%{initscript} $RPM_BUILD_ROOT/etc/init.d/dell_mdmon
+install -D -m755 %{wwix}dell_mdleds $RPM_BUILD_ROOT/usr/bin/dell_mdleds
+install -D -m755 %{wwix}%{initscript} $RPM_BUILD_ROOT/etc/init.d/dell_mdmon
 
 %clean
 
