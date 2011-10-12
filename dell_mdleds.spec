@@ -52,6 +52,7 @@ elif [ -x /sbin/chkconfig ] ; then
 	/sbin/chkconfig --add ipmi
 	/sbin/chkconfig --add dell_mdmon
 fi
+service dell_mdmon start
 
 %preun
 # Pre uninstall script
