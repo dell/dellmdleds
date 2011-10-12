@@ -1,0 +1,33 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          dellmdmon
+# Required-Start:    ipmi
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start Dell LED mdadm monitoring daemon at boot time
+# Description:       Enable Dell ELD service provided by mdadm daemon.
+### END INIT INFO
+
+if [ -e /lib/lsb/init-functions ] ; then
+	. /lib/lsb/init-functions
+else if [ -e /etc/init.d/functions ] ; then
+    . /etc/init.d/functions
+fi
+fi
+
+DAEMON=/sbin/mdadm
+PIDFILE=/var/run/dellmdmon.pid
+PROGRAM=/usr/bin/dell_mdleds
+
+case $1 in
+start)
+	echo -n "Starting Dell mdadm monitor"
+        start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- --monitor --scan --daemonize --pid-file $PIDFILE --program $PROGRAM
+        ;;
+stop)
+        echo -n "Stopping Dell mdadm monitor"
+        start-stop-daemon --stop --retry 5 --quiet --signal 1 --pidfile $PIDFILE
+        ;;
+esac

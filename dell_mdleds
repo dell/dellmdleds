@@ -1,0 +1,82 @@
+#!/bin/sh
+# The following script will set the Drive LEDs on PCIE-SSD devices
+# Called from mdadm --monitor --scan --program mdleds.sh
+DRV=`basename $2`
+PDSK=`basename "$3"`
+IPMITOOL=/usr/bin/ipmitool
+SYSFS=/sys
+
+# Set drive state given a path to the device
+# Handle both rssdX and rssdX1 devices
+setpathstate()
+{
+	if [ ! -e $1 ] ; then
+		echo "Path $1 does not exist"
+		exit 1
+	fi
+	RD=$(readlink -f $1/block)
+	if [ -e $RD/partition ] ; then
+		RD="$RD/.."
+	fi
+	LINK=$(readlink $RD/device)
+	if [ ! -z $LINK ] ; then
+		ADDR=$(basename $LINK)
+		echo $ADDR,$2
+		$IPMITOOL delloem setled $ADDR $2
+	fi
+}
+
+# Find drives that are member of RAID array, set status of individual drives
+setmdstate()
+{
+	MD=$1
+	for X in $SYSFS/devices/virtual/block/$MD/md/dev-* ; do
+		setpathstate $X "$2"
+	done
+}
+
+# Set drive status to specific state
+setdrstate()
+{
+	setpathstate $SYSFS/devices/virtual/block/$1/md/dev-$2 $3
+}
+
+# Handle input command from MDADM	
+case $1 in
+DeviceDisappeared)
+	setmdstate $DRV ""
+	;;
+RebuildStarted)
+#set all devices in mdX to "online rebuilding"
+	setmdstate $DRV "online rebuilding"
+	;;
+RebuildFinished)
+#set all devices in mdX to "online"
+	setmdstate $DRV "online"
+	;;
+Rebuild..)
+	;;
+Fail)
+#set device X to "failed"
+	setdrstate $DRV $PDSK "fault"
+	;;
+FailSpare)
+#set device X to "failed"
+	setdrstate $DRV $PDSK "fault"
+	;;
+NewArray)
+	setmdstate $DRV "online"
+	;;
+SpareActive)
+	;;
+DegradedArray)
+	;;
+TestADisk)
+# Test script
+	setmdstate $DRV "$3"
+	;;
+TestPDisk)
+	setdrstate $PDSK "$4"
+	;;
+esac
+
