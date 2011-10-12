@@ -35,6 +35,7 @@ lockfile=/var/lock/subsys/$prog
 pidfile=/var/run/$prog.pid
 
 start() {
+    service ipmi start
     echo -n $"Starting $prog: "
     # if not running, start it up here, usually something like "daemon $exec"
     daemon --pidfile $pidfile /sbin/mdadm --monitor --scan --daemonize --pid-file $pidfile --program $exec
