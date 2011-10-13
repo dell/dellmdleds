@@ -1,16 +1,9 @@
 #!/bin/sh
 #
-# Dell Inc. PROPRIETARY INFORMATION
-#
-# This software is supplied under the terms of a license agreement or
-# nondisclosure agreement with Dell Inc. and may not
-# be copied or disclosed except in accordance with the terms of that
-# agreement.
-#
-# Copyright (c) 2010-2011 Dell Inc. All Rights Reserved.
+# Copyright (c) 2010, 2011 Dell, Inc.  <jordan_hargrave@dell.com>
+# Licensed under the GNU General Public License, Version 2.
 #
 # Version: 1.0
-# The following is for Redhat
 #
 #chkconfig: 2345 00 20
 #description: Starts/Stops the mdadm monitoring script to set drive LEDs

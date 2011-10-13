@@ -1,5 +1,3 @@
-#%define wwix /root/source/dellmdleds/
-
 %define is_suse %(test -e /etc/SuSE-release && echo 1 || echo 0)
 %define is_fedora %(test -e /etc/fedora-release && echo 1 || echo 0)
 %define is_redhat %(test -e /etc/redhat-release && echo 1 || echo 0)
@@ -33,8 +31,8 @@ backplane LEDs (failure, identify) on Dell servers.
 %build
 
 %install
-install -D -m755 %{wwix}dell_mdleds $RPM_BUILD_ROOT/usr/bin/dell_mdleds
-install -D -m755 %{wwix}%{initscript} $RPM_BUILD_ROOT/etc/init.d/dell_mdmon
+install -D -m755 %{_sourcedir}/dell_mdleds $RPM_BUILD_ROOT/usr/bin/dell_mdleds
+install -D -m755 %{_sourcedir}/%{initscript} $RPM_BUILD_ROOT/etc/init.d/dell_mdmon
 
 %clean
 

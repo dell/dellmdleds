@@ -1,4 +1,7 @@
 #!/bin/sh
+# Copyright (c) 2010, 2011 Dell, Inc.  <jordan_hargrave@dell.com>
+# Licensed under the GNU General Public License, Version 2.
+#
 # The following script will set the Drive LEDs on PCIE-SSD devices
 # Called from mdadm --monitor --scan --program mdleds.sh
 DRV=`basename $2`
